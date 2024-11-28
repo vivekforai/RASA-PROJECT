@@ -1,0 +1,39 @@
+version: "3.1"
+
+nlu:
+  - intent: greet
+    examples: |
+      - hey
+      - hello
+      - hi
+
+  - intent: goodbye
+    examples: |
+      - bye
+      - goodbye
+      - see you later
+
+  - intent: ask_task_count
+    examples: |
+      - How many tasks are there in the project?
+      - Total number of tasks?
+
+  - intent: ask_milestone_tasks
+    examples: |
+      - How many tasks are there in [MS-001](milestone)?
+      - Show me tasks in [MS-002](milestone).
+
+  - intent: ask_member_tasks
+    examples: |
+      - What tasks are assigned to [David Wilson](member)?
+      - Show me tasks for [Alice](member).
+
+  - intent: ask_chart_generation
+    examples: |
+      - Show me a bar chart comparing the number of tasks for each milestone.
+      - Create a pie chart of task status distribution.
+
+  - intent: bot_challenge
+    examples: |
+      - Are you a bot?
+      - Are you human?
