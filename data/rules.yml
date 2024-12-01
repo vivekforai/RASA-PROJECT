@@ -1,7 +1,28 @@
 version: "3.1"
 
 rules:
-  - rule: respond to bot challenge
-    steps:
-      - intent: bot_challenge
-      - action: utter_iamabot
+- rule: Ask for milestone if not set
+  steps:
+  - intent: ask_task_status_by_milestone
+  - slot_was_set:
+      - milestone: null
+  - action: utter_ask_milestone
+
+- rule: Ask for chart type if not set
+  steps:
+  - intent: ask_chart_visualization
+  - slot_was_set:
+      - chart_type: null
+  - action: utter_ask_chart_type
+
+- rule: Handle unsupported chart type
+  steps:
+  - intent: ask_chart_visualization
+  - slot_was_set:
+      - chart_type: null
+  - action: utter_ask_chart_type
+
+- rule: Handle fallback
+  steps:
+  - intent: nlu_fallback
+  - action: utter_default
