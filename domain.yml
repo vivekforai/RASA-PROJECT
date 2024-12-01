@@ -1,52 +1,48 @@
 version: "3.1"
 
 intents:
-  - greet
-  - goodbye
-  - affirm
-  - deny
-  - ask_task_count
-  - ask_milestone_tasks
-  - ask_member_tasks
-  - bot_challenge
-  - ask_chart_generation
+  - ask_task_status
+  - ask_task_status_by_status
+  - ask_task_status_by_milestone
+  - ask_task_status_by_status_and_milestone
+  - ask_chart_visualization
+  - i_am_a_bot
 
 entities:
   - milestone
-  - member
+  - status
+  - chart_type
 
 slots:
   milestone:
     type: text
-  member:
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: milestone
+  status:
     type: text
-  task_count:
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: status
+  chart_type:
     type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: chart_type
 
 responses:
-  utter_greet:
-    - text: "Hello! How can I assist you today?"
-
-  utter_goodbye:
-    - text: "Goodbye! Have a great day!"
-
-  utter_task_count:
-    - text: "There are {task_count} tasks in the project."
-
-  utter_milestone_tasks:
-    - text: "Milestone {milestone} has {task_count} tasks."
-
-  utter_member_tasks:
-    - text: "{member} is assigned to {task_count} tasks."
-
-  utter_generate_chart:
-    - text: "Chart generated successfully! Check the image at: data/output_chart.png."
-
-  utter_iamabot:
-    - text: "I am a helpful bot, here to assist you."
+  utter_ask_milestone:
+    - text: "Which milestone are you asking about? (e.g., MS-001, MS-002)"
+  utter_ask_status:
+    - text: "What is the task status you're referring to? (e.g., Completed, In Progress)"
+  utter_ask_chart_type:
+    - text: "What type of chart would you like? (e.g., bar chart, pie chart)"
+  utter_default:
+    - text: "Sorry, I didn’t understand that. Can you rephrase?"
 
 actions:
-  - action_task_count
-  - action_milestone_tasks
-  - action_generate_chart
-  - action_member_tasks
+  - action_query_tasks
+  - action_generate_visualization
