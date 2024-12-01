@@ -1,88 +1,70 @@
 import pandas as pd
-from typing import Any, Text, Dict, List
+import matplotlib.pyplot as plt
 from rasa_sdk import Action, Tracker
-from rasa_sdk.events import SlotSet
 from rasa_sdk.executor import CollectingDispatcher
+from typing import Any, Text, Dict, List
 
+# Load CSV data
+try:
+    data = pd.read_csv("D:/IDC_rasa/data/project_data.csv")  # Updated path
+    print("CSV loaded successfully!")  # Debugging statement
+except FileNotFoundError:
+    print("CSV file not found. Please check the file path.")
+    data = None
 
-class ActionTaskCount(Action):
+class ActionQueryTasks(Action):
     def name(self) -> Text:
-        return "action_task_count"
+        return "action_query_tasks"
 
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        try:
-            # Load the CSV file
-            data = pd.read_csv("data/project_data.csv")
-            task_count = len(data)
-
-            # Send a response back to the user
-            dispatcher.utter_message(text=f"There are {task_count} tasks in total.")
-            return [SlotSet("task_count", task_count)]
-        except Exception as e:
-            dispatcher.utter_message(text="Unable to retrieve task count.")
-            print(f"Error in ActionTaskCount: {e}")
+        
+        if data is None:
+            dispatcher.utter_message(text="I couldn't access the task data. Please check the CSV file path.")
             return []
 
-
-class ActionMilestoneTasks(Action):
-    def name(self) -> Text:
-        return "action_milestone_tasks"
-
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        # Extract the milestone slot value
         milestone = tracker.get_slot("milestone")
-        if not milestone:
-            dispatcher.utter_message(text="Please specify the milestone.")
-            return []
+        status = tracker.get_slot("status")
+        
+        filtered_data = data
+        if milestone:
+            filtered_data = filtered_data[filtered_data["Milestones"] == milestone]
+        if status:
+            filtered_data = filtered_data[filtered_data["Status"].str.lower() == status.lower()]
+        
+        task_count = len(filtered_data)
+        dispatcher.utter_message(text=f"There are {task_count} tasks matching your criteria.")
+        return []
 
-        try:
-            # Load the CSV file
-            data = pd.read_csv("data/project_data.csv")
-
-            # Filter tasks based on the specified milestone
-            milestone_tasks = data[data['Milestones'].str.strip().str.lower() == milestone.strip().lower()]
-            task_count = len(milestone_tasks)
-
-            # Send a response back to the user
-            dispatcher.utter_message(text=f"Milestone {milestone} has {task_count} tasks.")
-            return [
-                SlotSet("task_count", task_count),
-                SlotSet("milestone", milestone)
-            ]
-        except Exception as e:
-            # Handle any errors
-            dispatcher.utter_message(text="Unable to retrieve milestone tasks.")
-            print(f"Error in ActionMilestoneTasks: {e}")
-            return []
-
-
-class ActionGenerateChart(Action):
+class ActionGenerateVisualization(Action):
     def name(self) -> Text:
-        return "action_generate_chart"
+        return "action_generate_visualization"
 
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        try:
-            # Load the CSV file
-            data = pd.read_csv("data/project_data.csv")
-
-            # Example logic to generate a chart (e.g., task status distribution)
-            chart_data = data['Status'].value_counts()
-            chart = chart_data.plot(kind='pie', autopct='%1.1f%%')
-
-            # Save the chart
-            output_path = "data/output_chart.png"
-            chart.figure.savefig(output_path)
-
-            # Send a response back to the user
-            dispatcher.utter_message(text=f"Chart generated successfully! Check the image at: {output_path}")
+        
+        if data is None:
+            dispatcher.utter_message(text="I couldn't access the task data. Please check the CSV file path.")
             return []
-        except Exception as e:
-            dispatcher.utter_message(text="Unable to generate chart.")
-            print(f"Error in ActionGenerateChart: {e}")
+
+        chart_type = tracker.get_slot("chart_type")
+        milestone = tracker.get_slot("milestone")
+
+        filtered_data = data
+        if milestone:
+            filtered_data = filtered_data[filtered_data["Milestones"] == milestone]
+
+        if chart_type == "bar":
+            filtered_data["Status"].value_counts().plot(kind="bar", title="Task Status Distribution")
+        elif chart_type == "pie":
+            filtered_data["Status"].value_counts().plot(kind="pie", autopct='%1.1f%%', title="Task Status Distribution")
+        else:
+            dispatcher.utter_message(text=f"Unsupported chart type: {chart_type}. Please choose bar or pie.")
             return []
+
+        plt.savefig("chart.png")
+        plt.close()
+        dispatcher.utter_message(image="chart.png")
+        return []
