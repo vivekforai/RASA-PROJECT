@@ -1,39 +1,43 @@
 version: "3.1"
 
 nlu:
-  - intent: greet
-    examples: |
-      - hey
-      - hello
-      - hi
+- intent: ask_task_status
+  examples: |
+    - How many tasks are in the project?
+    - Count the tasks in the project.
+    - Can you tell me the total number of tasks?
 
-  - intent: goodbye
-    examples: |
-      - bye
-      - goodbye
-      - see you later
+- intent: ask_task_status_by_status
+  examples: |
+    - How many tasks are [Completed](status)?
+    - Show me tasks with the status [In Progress](status).
+    - Count all [Failed](status) tasks.
+    - How many [Testing](status) tasks do we have?
+    - Tasks in [Hold](status), please.
 
-  - intent: ask_task_count
-    examples: |
-      - How many tasks are there in the project?
-      - Total number of tasks?
+- intent: ask_task_status_by_milestone
+  examples: |
+    - How many tasks are there in milestone [MS-001](milestone)?
+    - Count the tasks in milestone [MS-002](milestone).
+    - Show the tasks in milestone [MS-003](milestone).
 
-  - intent: ask_milestone_tasks
-    examples: |
-      - How many tasks are there in [MS-001](milestone)?
-      - Show me tasks in [MS-002](milestone).
+- intent: ask_task_status_by_status_and_milestone
+  examples: |
+    - How many [Completed](status) tasks are there in milestone [MS-001](milestone)?
+    - Show me the tasks [In Progress](status) in milestone [MS-002](milestone).
+    - How many [Failed](status) tasks are in milestone [MS-003](milestone)?
 
-  - intent: ask_member_tasks
-    examples: |
-      - What tasks are assigned to [David Wilson](member)?
-      - Show me tasks for [Alice](member).
+- intent: ask_chart_visualization
+  examples: |
+    - Generate a [bar](chart_type) chart for milestone [MS-001](milestone).
+    - Show me a [pie](chart_type) chart for task statuses.
+    - Create a [bar](chart_type) graph for milestone [MS-002](milestone).
+    - Visualize the tasks in a [line](chart_type) graph.
+    - Generate a [bar](chart_type) chart on the task status.
 
-  - intent: ask_chart_generation
-    examples: |
-      - Show me a bar chart comparing the number of tasks for each milestone.
-      - Create a pie chart of task status distribution.
-
-  - intent: bot_challenge
-    examples: |
-      - Are you a bot?
-      - Are you human?
+- intent: i_am_a_bot
+  examples: |
+    - Who are you?
+    - What is your purpose?
+    - Are you a bot?
+    - What can you do?
