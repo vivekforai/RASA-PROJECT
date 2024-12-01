@@ -1,30 +1,36 @@
 version: "3.1"
 
 stories:
-  - story: task count query
-    steps:
-      - intent: ask_task_count
-      - action: action_task_count
-      - action: utter_task_count
+- story: user_requests_task_count
+  steps:
+  - intent: ask_task_status
+  - action: action_query_tasks
 
-  - story: milestone tasks query
-    steps:
-      - intent: ask_milestone_tasks
-      - slot_was_set:
-          - milestone: "MS-001"
-      - action: action_milestone_tasks
-      - action: utter_milestone_tasks
+- story: user_requests_task_count_by_status
+  steps:
+  - intent: ask_task_status_by_status
+  - slot_was_set:
+      - status: Completed
+  - action: action_query_tasks
 
-  - story: member tasks query
-    steps:
-      - intent: ask_member_tasks
-      - slot_was_set:
-          - member: "David Wilson"
-      - action: action_member_tasks
-      - action: utter_member_tasks
+- story: user_requests_task_count_by_milestone
+  steps:
+  - intent: ask_task_status_by_milestone
+  - slot_was_set:
+      - milestone: MS-001
+  - action: action_query_tasks
 
-  - story: generate chart query
-    steps:
-      - intent: ask_chart_generation
-      - action: action_generate_chart
-      - action: utter_generate_chart
+- story: user_requests_task_count_by_status_and_milestone
+  steps:
+  - intent: ask_task_status_by_status_and_milestone
+  - slot_was_set:
+      - milestone: MS-002
+      - status: In Progress
+  - action: action_query_tasks
+
+- story: user_requests_visualization
+  steps:
+  - intent: ask_chart_visualization
+  - slot_was_set:
+      - chart_type: bar
+  - action: action_generate_visualization
